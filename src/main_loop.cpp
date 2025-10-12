@@ -74,7 +74,7 @@ void MainLoop::run()
 
         m_prev_time = m_curr_time;
 
-        while( 1 )
+        while(1)
         {
             m_curr_time = SDL_GetTicks();
             dt =(float)(m_curr_time - m_prev_time);
@@ -99,7 +99,7 @@ void MainLoop::run()
         }
         dt *= 0.001f;
 
-        if (!music_on && !race_manager->raceIsActive())
+        if(!music_on && !race_manager->raceIsActive())
         {
             sound_manager->stopMusic();   // stop potential 'left over' music from race
             sound_manager->startMusic(stk_config->m_title_music);
@@ -108,7 +108,7 @@ void MainLoop::run()
 
         network_manager->update(dt);
 
-        if (race_manager->raceIsActive())
+        if(race_manager->raceIsActive())
         {
             // Busy wait if race_manager is active (i.e. creating of world is done)
             // till all clients have reached this state.
@@ -133,7 +133,7 @@ void MainLoop::run()
             if(!race_manager->getWorld()->isFinishPhase())
                 network_manager->receiveUpdates();
 
-            if ( RaceManager::getWorld()->getPhase() != LIMBO_PHASE)
+            if(RaceManager::getWorld()->getPhase() != LIMBO_PHASE)
             {
                 history->update(dt);
                 RaceManager::getWorld()->update(dt);
@@ -141,7 +141,7 @@ void MainLoop::run()
                 if(user_config->m_profile>0)
                 {
                     m_frame_count++;
-                    if (RaceManager::getWorld()->getTime()>user_config->m_profile)
+                    if(RaceManager::getWorld()->getTime()>user_config->m_profile)
                     {
                         //FIXME: SDL_GetTicks() includes the loading time,
                         //so the FPS will be skewed for now.
@@ -183,7 +183,6 @@ void MainLoop::run()
         #endif
             
             //Draw the splash screen
-            
             if(menu_manager->isMainMenuActive())
                 glBindTexture(GL_TEXTURE_2D, m_title_screen_texture);
             else 
@@ -195,7 +194,7 @@ void MainLoop::run()
             glTexCoord2f(1,0); glVertex2i( 1,-1);
             glTexCoord2f(1,1); glVertex2i( 1, 1);
             glTexCoord2f(0,1); glVertex2i(-1, 1);
-            glEnd () ;
+            glEnd();
         }
 
         menu_manager->update();

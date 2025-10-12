@@ -227,7 +227,7 @@ void STKConfig::getAllData(const lisp::Lisp* lisp)
     std::string default_music;
     lisp->get("default-track-music",          default_music            );
     m_default_music = new MusicInformation(file_manager->getMusicFile(default_music));
-    m_title_music = new MusicInformation(file_manager->getMusicFile(title_music));
+    m_title_music   = new MusicInformation(file_manager->getMusicFile(title_music));
 
     // Get the default KartProperties
     // ------------------------------
