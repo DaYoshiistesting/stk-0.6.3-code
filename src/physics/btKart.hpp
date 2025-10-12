@@ -34,16 +34,17 @@ public:
     btScalar     rayCast(btWheelInfo& wheel);
     btScalar     rayCast(btWheelInfo& wheel, const btVector3& ray);
     bool         projectVehicleToSurface(const btVector3& ray, bool translate_vehicle);
-    void         setSkidding(btScalar sf)     { m_skidding_factor = sf; }
+    void         setSkidding(btScalar sf)     {m_skidding_factor = sf;}
     virtual void updateVehicle(btScalar step);
     void         resetSuspension();
-    int          getNumWheelsOnGround() const { return m_num_wheels_on_ground; }
+    int          getNumWheelsOnGround() const {return m_num_wheels_on_ground;}
     void         setRaycastWheelInfo(int wheelIndex , bool isInContact, 
                                      const btVector3& hitPoint, 
                                      const btVector3& hitNormal,btScalar depth);
-    void         setPitchControl(btScalar pitch) { m_pitchControl = pitch; }
-    void         activateZipper(btScalar vel) { m_zipper_active = true; m_zipper_velocity = vel; }
-    void         deactivateZipper() { m_zipper_active = false; }
+    void         setPitchControl(btScalar pitch) {m_pitchControl = pitch;}
+    bool         isZipperActive() {return m_zipper_active;}
+    void         activateZipper(btScalar vel) {m_zipper_active = true; m_zipper_velocity = vel;}
+    void         deactivateZipper() {m_zipper_active = false;}
     void         updateSuspension(btScalar deltaTime);
     virtual void updateFriction(btScalar timeStep);
 };

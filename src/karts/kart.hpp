@@ -119,7 +119,6 @@ private:
     SFXBase      *m_beep_ai_sound;
     SFXBase      *m_crash_sound;
     SFXBase      *m_skid_sound;
-    SFXBase      *m_wee_sound;
     SFXBase      *m_goo_sound;
     float         m_time_last_crash;
 

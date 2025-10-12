@@ -107,7 +107,6 @@ Kart::Kart (const std::string& kart_name, int position,
     m_beep_sound    = sfx_manager->newSFX(SFXManager::SOUND_BEEP   );
     m_crash_sound   = sfx_manager->newSFX(SFXManager::SOUND_CRASH  );
     m_skid_sound    = sfx_manager->newSFX(SFXManager::SOUND_SKID   );
-    m_wee_sound     = sfx_manager->newSFX(SFXManager::SOUND_WEE    );
     m_goo_sound     = sfx_manager->newSFX(SFXManager::SOUND_GOO    );
     
     
@@ -241,7 +240,6 @@ Kart::~Kart()
     sfx_manager->deleteSFX(m_beep_ai_sound);
     sfx_manager->deleteSFX(m_crash_sound  );
     sfx_manager->deleteSFX(m_skid_sound   );
-    sfx_manager->deleteSFX(m_wee_sound    );
     sfx_manager->deleteSFX(m_goo_sound    );
     
     if(m_smoke_system) ssgDeRefDelete(m_smoke_system);
@@ -445,6 +443,7 @@ bool Kart::isOnGround() const
         && !isRescue());
            
 }   // isOnGround
+
 //-----------------------------------------------------------------------------
 /** The kart is near the ground, but not necesarily on it (small jumps). This
  *  is used to determine when to switch off the upright constraint, so that
@@ -457,6 +456,7 @@ bool Kart::isNearGround() const
     else
         return ((getXYZ().getZ() - getHoT()) < stk_config->m_near_ground);
 }   // isNearGround
+
 //-----------------------------------------------------------------------------
 void Kart::handleExplosion(const Vec3& pos, bool direct_hit)
 {
@@ -627,7 +627,7 @@ void Kart::update(float dt)
         // rescue, so those things are not triggered till the kart is on the 
         // track again)
         if     (material->isReset()  && isOnGround()) forceRescue();
-        else if(material->isZipper() && isOnGround()) handleZipper();
+        else if(material->isZipper() && isOnGround()) handleZipper(false);
         else
         {
             m_power_reduction = material->getSlowDown();
@@ -677,18 +677,11 @@ void Kart::handleZipper(bool play_sfx)
     float current_speed = v.length();
     float speed         = std::min(current_speed+stk_config->m_zipper_speed_gain, 
                                    getMaxSpeedOnTerrain());
-
-    // Only play the wee sound if it's a player.
-    if(isPlayerKart())
-    {
-        if(play_sfx || m_wee_sound->getStatus() != SFXManager::SFX_PLAYING && 
-           getMaterial()!=getLastMaterial() && isOnGround()) m_wee_sound->play();
-        if(m_wee_sound->getStatus() == SFXManager::SFX_PLAYING)
-            m_vehicle->activateZipper(speed);
-    }
-    else if (!isPlayerKart())
-        m_vehicle->activateZipper(speed);
-
+    
+    // First activate the zipper then play weeee sound
+    m_vehicle->activateZipper(speed);
+    if(m_vehicle->isZipperActive() == true)
+        Moveable::handleZipper(play_sfx);
 }   // handleZipper
 
 //-----------------------------------------------------------------------------
@@ -702,8 +695,8 @@ void Kart::draw()
     //RaceManager::getWorld()->getPhysics()->debugDraw(m, m_body->getCollisionShape(), 
     //                                                 wire_color);
     btCylinderShapeX wheelShape(btVector3(0.1f,
-                                        m_kart_properties->getWheelRadius(),
-                                        m_kart_properties->getWheelRadius()));
+                                          m_kart_properties->getWheelRadius(),
+                                          m_kart_properties->getWheelRadius()));
     btVector3 wheelColor(1,0,0);
     for(int i=0; i<m_vehicle->getNumWheels(); i++)
     {
@@ -728,7 +721,6 @@ float Kart::handleNitro(float dt)
         return 0.0;
     }
     return m_kart_properties->getNitroPowerBoost() * getMaxPower();
-
 }   // handleNitro
 
 // -----------------------------------------------------------------------------
@@ -741,6 +733,7 @@ void Kart::resetBrakes()
 {
     for(int i=0; i<4; i++) m_vehicle->setBrake(0.0f, i);
 }   // resetBrakes
+
 // -----------------------------------------------------------------------------
 void Kart::crashed(Kart *k)
 {
@@ -965,6 +958,7 @@ void Kart::forceRescue()
 {
     m_rescue=true;
 }   // forceRescue
+
 //-----------------------------------------------------------------------------
 /** Drops a kart which was rescued back on the track.
  */
@@ -974,6 +968,8 @@ void Kart::endRescue()
 
     m_body->setLinearVelocity (btVector3(0.0f,0.0f,0.0f));
     m_body->setAngularVelocity(btVector3(0.0f,0.0f,0.0f));
+
+    m_vehicle->deactivateZipper();
 
     // let the mode decide where to put the kart
     RaceManager::getWorld()->moveKartAfterRescue(this, m_body);
@@ -1066,8 +1062,10 @@ void Kart::updateGraphics(const Vec3& off_xyz, const Vec3& off_hpr)
     }
 #define AUTO_SKID_VISUAL 1.7f
     float auto_skid; 
-    if (m_skidding>AUTO_SKID_VISUAL) // Above a limit, start counter rotating the wheels to get drifting look 
-        auto_skid = m_controls.m_steer*30.0f*((AUTO_SKID_VISUAL - m_skidding) / 0.8f); // divisor comes from max_skid - AUTO_SKID_VISUAL
+    // Above a limit, start counter rotating the wheels to get drifting look 
+    if (m_skidding>AUTO_SKID_VISUAL)
+         // divisor comes from max_skid - AUTO_SKID_VISUAL
+        auto_skid = m_controls.m_steer*30.0f*((AUTO_SKID_VISUAL - m_skidding) / 0.8f);
     else
         auto_skid = m_controls.m_steer*30.0f;
     kart_model->adjustWheels(m_wheel_rotation, auto_skid,
@@ -1096,4 +1094,5 @@ void Kart::updateGraphics(const Vec3& off_xyz, const Vec3& off_hpr)
     Moveable::updateGraphics(center_shift, Vec3(offset_heading, 0, 0));
 }   // updateGraphics
 
+//-----------------------------------------------------------------------------
 /* EOF */

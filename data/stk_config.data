@@ -15,8 +15,8 @@
   (default-track-music      "kart_grand_prix.music")
   ;; Two lists which must have the same length, containing the list of all
   ;; possible main menu and background images.
-  (mainmenu-background      "st_title_screen.rgb" "st_title_screen1.rgb" "st_title_screen2.rgb")
-  (menu-background          "menu_background.rgb" "menu_background1.rgb" "menu_background2.rgb")
+  (mainmenu-background      "st_title_screen.rgb" "st_title_screen_2.rgb" "st_title_screen_3.rgb")
+  (menu-background          "menu_background.rgb" "menu_background_2.rgb" "menu_background_3.rgb")
   
   (max-history                1000)   ;; Maximum number of history frames.
   (max-skidmarks              1000)   ;; Maximum number of skidmarks per kart.

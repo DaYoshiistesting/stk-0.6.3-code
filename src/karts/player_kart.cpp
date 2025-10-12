@@ -44,6 +44,7 @@ PlayerKart::PlayerKart(const std::string& kart_name, int position, Player *playe
     m_camera->setMode(Camera::CM_NORMAL);
 
     m_bzzt_sound  = sfx_manager->newSFX(SFXManager::SOUND_BZZT);
+    m_wee_sound   = sfx_manager->newSFX(SFXManager::SOUND_WEE );
     m_ugh_sound   = sfx_manager->newSFX(SFXManager::SOUND_UGH );
     m_grab_sound  = sfx_manager->newSFX(SFXManager::SOUND_GRAB);
     m_full_sound  = sfx_manager->newSFX(SFXManager::SOUND_FULL);
@@ -55,6 +56,7 @@ PlayerKart::PlayerKart(const std::string& kart_name, int position, Player *playe
 PlayerKart::~PlayerKart()
 {
     sfx_manager->deleteSFX(m_bzzt_sound);
+    sfx_manager->deleteSFX(m_wee_sound);
     sfx_manager->deleteSFX(m_ugh_sound );
     sfx_manager->deleteSFX(m_grab_sound);
     sfx_manager->deleteSFX(m_full_sound);
@@ -316,6 +318,22 @@ void PlayerKart::raceFinished(float time)
                       this, 2.0f, 50);
     }
 }   // raceFinished
+
+//-----------------------------------------------------------------------------
+/** Called when a kart hits or uses a zipper.
+ * \param play_sfx This makes the sfx sound play even if the kart is not
+ *                 on a zipper material. It is used by the zipper powerup.
+ */
+void PlayerKart::handleZipper(bool play_sfx)
+{
+    if(play_sfx || m_wee_sound->getStatus() != SFXManager::SFX_PLAYING && 
+       getMaterial()!=getLastMaterial())
+    {
+        m_wee_sound->play();
+    }
+	if(m_wee_sound->getStatus()==SFXManager::SFX_PLAYING)
+        Kart::handleZipper();
+}   // handleZipper
 
 //-----------------------------------------------------------------------------
 /** Called when a kart hits an item.

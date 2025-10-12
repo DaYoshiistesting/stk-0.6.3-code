@@ -63,9 +63,9 @@ SFXManager::~SFXManager()
     }   // for i in m_all_sfx
 
     //the unbuffer all of the buffers
-    for(unsigned int ii = 0; ii != m_sfx_buffers.size(); ii++)
+    for(unsigned int j = 0; j != m_sfx_buffers.size(); j++)
     {
-        alDeleteBuffers(1, &(m_sfx_buffers[ii]));
+        alDeleteBuffers(1, &(m_sfx_buffers[j]));
     } 
 }   // ~SFXManager
 
@@ -148,7 +148,7 @@ void SFXManager::loadSingleSfx(const lisp::Lisp* lisp,
     std::string path = file_manager->getSFXFile(wav);
 
     alGenBuffers(1, &(m_sfx_buffers[item]));
-    if (!checkError("generating a buffer")) return;
+    if(!checkError("generating a buffer")) return;
 
     ALenum format = 0;
     Uint32 size = 0;

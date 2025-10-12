@@ -16,6 +16,8 @@ First, make sure that you have the following packages installed/compiled:
   * Vorbis.
   * Ogg.
 
+Note: SDL 1.2 Compatibility Layer is compatible.
+
 
 **ALL OF THE PACKAGES ABOVE MUST BE COMPILED IN RELEASE AND WIN32 CONFIG!!**
 

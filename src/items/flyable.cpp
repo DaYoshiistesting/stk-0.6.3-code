@@ -19,9 +19,6 @@
 
 #include "items/flyable.hpp"
 
-#if defined(WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#  define isnan _isnan
-#endif
 #include <math.h>
 
 #include "callback_manager.hpp"
@@ -60,7 +57,6 @@ Flyable::Flyable(Kart *kart, PowerupType type, float mass) : Moveable()
     m_shape             = NULL;
     m_mass              = mass;
     m_adjust_z_velocity = true;
-    do_terrain_info     = true;
     m_time_since_thrown = 0;
     m_owner_has_temporary_immunity = true;
     m_max_lifespan = -1;
@@ -206,7 +202,7 @@ void Flyable::getClosestKart(const Kart **minKart, float *minDistSquared,
  *  \param gravity The gravity used for this item.
  *  \param y_offset How far ahead of the kart the item is shot (so that
  *         the item does not originate inside of the shooting kart.
- *  \param projectileAngle Returns the angle to fire the item at.
+ *  \param projectileAngle Returns the angle to launch the item at.
  *  \param z_velocity Returns the upwards velocity to use for the item.
  */
 void Flyable::getLinearKartItemIntersection (const Vec3 &origin, 
@@ -261,51 +257,40 @@ void Flyable::getLinearKartItemIntersection (const Vec3 &origin,
 
 }   // getLinearKartItemIntersection
 // ----------------------------------------------------------------------------
-bool Flyable::updateAndDel(float dt)
+void Flyable::update(float dt)
 {
     m_time_since_thrown += dt;
     if(m_max_lifespan > -1 && m_time_since_thrown > m_max_lifespan) hit(NULL);
     
-    if(m_exploded) return false;
-    if(m_has_hit_something) return true;
+    if(m_exploded) return;
     
-    Vec3 pos = getXYZ();
-    // Check if the flyable is out of the track boundary. If so, let it explode.
+    Vec3 pos = getBody()->getWorldTransform().getOrigin();
+    TerrainInfo::update(pos);
+    // Check if the flyable is out of the track boundary. 
+    // If so, let it explode. Note: height is not tested,
+    // so that things can fly as high as they want to.
     Vec3 min, max;
     RaceManager::getTrack()->getAABB(&min, &max);
-
-    // I have seen that the bullet AABB can be slightly different from the 
-    // one computed here - I assume due to minor floating point errors
-    // (e.g. 308.25842 instead of 308.25845). To avoid a crash with a bullet
-    // assertion, I add an epsilon here - but admittedly that does not really
-    // explain the bullet crash, since bullet tests against its own AABB, 
-    // and should therefore not cause the assertion. But since we couldn't 
-    // reproduce the problem, and the epsilon used here does not hurt,
-    // I'll leave it in.
-    float eps = 0.1f;
-    assert(!isnan(pos.getX()));
-    assert(!isnan(pos.getY()));
-    assert(!isnan(pos.getZ()));
-    if(pos[0]<(min)[0]+eps || pos[1]<(min)[1]+eps || pos[2]<(min)[2]+eps ||
-       pos[0]>(max)[0]-eps || pos[1]>(max)[1]-eps || pos[2]>(max)[2]-eps)   
+    Vec3 xyz = getXYZ();
+    if(xyz[0]<min[0] || xyz[1]<min[1] || xyz[2]<min[2] || 
+       xyz[0]>max[0] || xyz[1]>max[1])   
     {
         hit(NULL);    // flyable out of track boundary
-        return true;
+        return;
     }
-    if(do_terrain_info) 
-        TerrainInfo::update(pos);
-
+    
     if(m_adjust_z_velocity)
     {
         float hat = pos.getZ()-getHoT();
         // Use the Height Above Terrain to set the Z velocity.
         // HAT is clamped by min/max height. This might be somewhat
         // unphysical, but feels right in the game.
-        float delta = m_average_height - std::max(std::min(hat, m_max_height), m_min_height);
+        hat = std::max(std::min(hat, m_max_height) , m_min_height);
+        float delta = m_average_height - hat;
         Vec3 v = getVelocity();
-        float heading = atan2f(v.getX(), v.getY());
+        float heading = -atan2f(v.getX(), v.getY());
         float pitch   = getTerrainPitch(heading);
-        float vel_up = m_force_updown*(delta);
+        float vel_up  = m_force_updown*(delta);
         if(hat < m_max_height) // take into account pitch of surface
             vel_up += v.length_2d()*tanf(pitch);
         v.setZ(vel_up);
@@ -313,7 +298,6 @@ bool Flyable::updateAndDel(float dt)
     }   // if m_adjust_z_velocity
 
     Moveable::update(dt);
-    return false;
 }   // update
 
 // -----------------------------------------------------------------------------
@@ -349,10 +333,10 @@ bool Flyable::isOwnerImmunity(const Kart* kart_hit) const
  *  \return True if there was actually a hit (i.e. not owner, and target is 
  *          not immune), false otherwise.
  */
-bool Flyable::hit(Kart *kart_hit, MovingPhysics *mp)
+void Flyable::hit(Kart *kart_hit, MovingPhysics *mp)
 {
     // the owner of this flyable should not be hit by his own flyable
-    if(m_exploded || isOwnerImmunity(kart_hit)) return false;
+    if(m_exploded || isOwnerImmunity(kart_hit)) return;
 
     m_has_hit_something=true;
 
@@ -369,9 +353,9 @@ bool Flyable::hit(Kart *kart_hit, MovingPhysics *mp)
     Vec3 pos_explosion=getXYZ();
     pos_explosion.setZ(pos_explosion.getZ()+1.2f);
     RaceManager::getWorld()->getPhysics()->removeBody(getBody());
-    m_exploded=true;
+    m_exploded = true;
 
-    if(!needsExplosion()) return false;
+    if(!needsExplosion()) return;
 
     // Apply explosion effect
     // ----------------------
@@ -390,7 +374,7 @@ bool Flyable::hit(Kart *kart_hit, MovingPhysics *mp)
         }
     }
     callback_manager->handleExplosion(pos_explosion, mp);
-    return true;
-}
+}   // hit
+// -----------------------------------------------------------------------------
 
 /* EOF */

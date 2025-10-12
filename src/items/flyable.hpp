@@ -67,10 +67,6 @@ protected:
     /** Time since thrown. used so a kart can't hit himself when trying something,
         and also to put some time limit to some collectibles. */
     float             m_time_since_thrown;
-    
-    /** If this variable is set to true (which is the default) flyable
-        will update the height of terrain. */
-    bool              do_terrain_info;
 
     /** Set to something > -1 if this flyable should auto-destrcut after a while. */
     float             m_max_lifespan;
@@ -109,14 +105,14 @@ public:
     /** Enables/disables adjusting ov velocity depending on height above 
      *  terrain. Missiles can 'follow the terrain' with this adjustment,
      *  but gravity will basically be disabled.                          */
-    void         setAdjustZVelocity(bool f) { m_adjust_z_velocity = f; }
+    void         setAdjustZVelocity(bool f) {m_adjust_z_velocity = f;}
     static void  init              (const lisp::Lisp* lisp, ssgEntity *model, 
                                     PowerupType type);
-    virtual bool updateAndDel      (float);
+    virtual void update            (float dt);
     void         updateFromServer  (const FlyableInfo &f, float dt);
 
     virtual void hitTrack          ()       {};
-    virtual bool hit               (Kart* kart, MovingPhysics* moving_physics=NULL);
+    virtual void hit               (Kart* kart, MovingPhysics* moving_physics=NULL);
     bool         hasHit            ()       {return m_has_hit_something;}
     /** Indicates that something was hit and that this object must 
      *  be removed. */
@@ -127,10 +123,6 @@ public:
     /** Indicates if an explosion needs to be added if this flyable 
       * is removed. */
     virtual bool needsExplosion    () const {return true;}
-    /** Sets wether Flyable should update TerrainInfo as part of its update
-     *  call, or if the inheriting object will update TerrainInfo itself
-     *  (or perhaps not at all if it is not needed). */
-    void         setDoTerrainInfo  (bool d) { do_terrain_info = d; }
 };   // Flyable
 
 #endif

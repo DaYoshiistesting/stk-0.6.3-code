@@ -107,7 +107,7 @@ void Plunger::init(const lisp::Lisp* lisp, ssgEntity *plunger_model)
 }   // init
 
 // -----------------------------------------------------------------------------
-bool Plunger::updateAndDel(float dt)
+void Plunger::update(float dt)
 {
     // In keep-alive mode, just update the rubber band.
     if(m_keep_alive >= 0)
@@ -120,17 +120,15 @@ bool Plunger::updateAndDel(float dt)
             ssgTransform *m = getModelTransform();
             m->removeAllKids();
             scene->remove(m);
-            return true;
         }
         if(m_rubber_band != NULL) m_rubber_band->update(dt);
-        return false;
+        return;
     }
 
     // Else: update the flyable and the rubber band.
-    bool ret = Flyable::updateAndDel(dt);
     if(m_rubber_band != NULL) m_rubber_band->update(dt);
-    return ret;
-}   // updateAndDel
+    Flyable::update(dt);
+}   // update
 
 // -----------------------------------------------------------------------------
 /** Virtual function called when the plunger hits something.
@@ -140,9 +138,9 @@ bool Plunger::updateAndDel(float dt)
  *  \param kart Pointer to the kart hit (NULL if not a kart).
  *  \param mp  Pointer to MovingPhysics object if hit (NULL otherwise).
  */
-bool Plunger::hit(Kart *kart, MovingPhysics *mp)
+void Plunger::hit(Kart *kart, MovingPhysics *mp)
 {
-    if(isOwnerImmunity(kart)) return false;
+    if(isOwnerImmunity(kart)) return;
 
     // Pulling back makes no sense in battle mode, since this mode is not a race.
     // So, in battle mode, always hide view.
@@ -172,7 +170,7 @@ bool Plunger::hit(Kart *kart, MovingPhysics *mp)
         if(kart)
         {
             m_rubber_band->hit(kart);
-            return false;
+            return;
         }
         else if(mp)
         {
@@ -184,9 +182,8 @@ bool Plunger::hit(Kart *kart, MovingPhysics *mp)
             m_rubber_band->hit(NULL, &(getXYZ()));
         }
     }
-
-    // Ruberband attached.
-    return false;
+    // Rubberband attached.
+    return;
 }   // hit
 
 // -----------------------------------------------------------------------------

@@ -32,8 +32,7 @@ private:
 public:
     Bowling(Kart* kart);
     static  void init(const lisp::Lisp* lisp, ssgEntity* bowling);
-    virtual bool updateAndDel(float dt);
-    virtual bool hit(Kart* kart, MovingPhysics* mp=NULL);
+    virtual void update(float dt);
     
     int getExplosionSound() const { return SFXManager::SOUND_BOWLING_STRIKE; }
     

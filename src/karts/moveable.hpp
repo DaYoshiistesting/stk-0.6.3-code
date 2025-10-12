@@ -107,6 +107,7 @@ public:
         m_motion_state->setWorldTransform(m_transform);
     }
     // ------------------------------------------------------------------------
+    virtual void  handleZipper   (bool play_sfx) {};
     virtual void  updateGraphics (const Vec3& off_xyz, const Vec3& off_hpr);
     virtual void  reset          ();
     virtual void  update         (float dt);

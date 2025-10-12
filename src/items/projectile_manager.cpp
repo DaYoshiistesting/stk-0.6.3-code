@@ -141,10 +141,10 @@ void ProjectileManager::updateServer(float dt)
     {
         race_state->setNumFlyables(m_active_projectiles.size());
     }
-    Projectiles::iterator i = m_active_projectiles.begin();
-    while(i!=m_active_projectiles.end())
+    for(Projectiles::iterator i  = m_active_projectiles.begin();
+                              i != m_active_projectiles.end(); ++i)
     {
-        (*i)->updateAndDel(dt);
+        (*i)->update(dt);
         // Store the state information on the server
         if(network_manager->getMode()!=NetworkManager::NW_NONE)
         {
@@ -153,7 +153,6 @@ void ProjectileManager::updateServer(float dt)
                                                    (*i)->getRotation(),
                                                    (*i)->hasHit()));
         }
-        else i++;
     }
 }   // updateServer
 

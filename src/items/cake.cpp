@@ -120,18 +120,33 @@ void Cake::init(const lisp::Lisp* lisp, ssgEntity *cake_model)
 }   // init
 
 // -----------------------------------------------------------------------------
-/** Callback from the physics in case that a kart or physical object is hit. 
- *  The cake triggers an explosion when hit.
- *  \param kart The kart hit (NULL if no kart was hit).
- *  \param object The object that was hit (NULL if none).
- *  \returns True if there was actually a hit (i.e. not owner, and target is 
- *           not immune), false otherwise.
+/** This updates the cake to make hit register.
  */
-bool Cake::hit(Kart* kart, MovingPhysics* mp)
+void Cake::update(float dt)
 {
-    bool was_real_hit = Flyable::hit(kart, mp);
-    if(was_real_hit)
-       hit(kart, mp);
+    //The following commented out code adds a lock on to the cake. It is kept
+    //because it shows how to lock on to a moving target precisely with the
+    //intersection algorithm and may be one day useful for something else.
+	/*
+    if(m_target != NULL)
+    {
+        // correct direction to go towards aimed kart
+        btTransform my_trans = getTrans();
 
-    return was_real_hit;
-}   // hit
+        float projectileAngle = 0.0f;
+        float time_estimated  = 0.0f;
+        float z_velocity      = 0.0f;
+        btVector3 origin      = my_trans.getOrigin() 
+                              - m_target->getNormal() 
+                              * 0.5 * m_target->getKartHeight();
+        getLinearKartItemIntersection (origin, m_target,
+                                       m_speed, m_gravity, 0,
+                                       &projectileAngle, &z_velocity);
+        m_body->setLinearVelocity( btVector3(-m_speed * sinf (projectileAngle),
+                                             m_speed * cosf (projectileAngle),
+                                             z_velocity) );
+    }
+    */
+    
+    Flyable::update(dt);
+}   // update

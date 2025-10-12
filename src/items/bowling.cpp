@@ -28,7 +28,7 @@ float Bowling::m_st_force_to_target;
 // -----------------------------------------------------------------------------
 Bowling::Bowling(Kart *kart) : Flyable(kart, POWERUP_BOWLING, 50.0f /* mass */)
 {
-    float y_offset = 0.5f*kart->getKartLength() + m_extend.getY()/2.0f;
+    float y_offset = 0.54f*kart->getKartLength() + m_extend.getY()/2.0f;
     
     // if the kart is looking backwards, release from the back
     if(kart->getControls().m_look_back) 
@@ -84,11 +84,9 @@ void Bowling::init(const lisp::Lisp* lisp, ssgEntity *bowling)
 }   // init
 
 // -----------------------------------------------------------------------------
-bool Bowling::updateAndDel(float dt)
+void Bowling::update(float dt)
 {
-    bool can_be_delete = Flyable::updateAndDel(dt);
-    if(can_be_delete)
-        return true;
+    Flyable::update(dt);
 
     const Kart *kart=0;
     btVector3   direction;
@@ -98,7 +96,7 @@ bool Bowling::updateAndDel(float dt)
     {
         // limit angle, so that the bowling ball does not turn
         // around to hit a kart behind
-        if(fabs(m_body->getLinearVelocity().angle(direction)) < 1.3)
+        if(fabs(m_body->getLinearVelocity().angle(direction)) < 1.3f)
         {
             direction*=1/direction.length()*m_st_force_to_target;
             m_body->applyCentralForce(direction);
@@ -110,7 +108,7 @@ bool Bowling::updateAndDel(float dt)
     // speed, which causes the speed to increase, which in turn causes
     // the ball to fly higher and higher.
     btTransform trans = getTrans();
-    float hat         = trans.getOrigin().getZ();
+    float hat         = trans.getOrigin().getZ()-getHoT();
     // If the bowling ball is on a reset material or 
     // is in the air, destroy it.
     if(hat-0.5f*m_extend.getZ()<0.01f)
@@ -119,7 +117,7 @@ bool Bowling::updateAndDel(float dt)
         if(!material || material->isReset())
         {
             hit(NULL);
-            return true;
+            return;
         }
     }
     btVector3 v   = m_body->getLinearVelocity();
@@ -135,25 +133,9 @@ bool Bowling::updateAndDel(float dt)
     }   // hat< m_max_height  
     
     if(vlen<0.1)
-    {
         hit(NULL);
-        return true;
-    }
-    return false;
 
-}   // updateAndDel
+}   // update
 // -----------------------------------------------------------------------------
-/** Callback from the physics in case that a kart or physical object is hit. 
- *  The bowling ball triggers an explosion when hit.
- *  \param kart The kart hit (NULL if no kart was hit).
- *  \param object The object that was hit (NULL if none).
- *  \returns True if there was actually a hit (i.e. not owner, and target is 
- *           not immune), false otherwise.
- */
-bool Bowling::hit(Kart* kart, MovingPhysics* mp)
-{
-    bool was_real_hit = Flyable::hit(kart, mp);
-    if(was_real_hit)
-        hit(kart, mp);
-    return was_real_hit;
-}
+
+/* EOF */

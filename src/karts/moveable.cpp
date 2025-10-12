@@ -67,7 +67,7 @@ void Moveable::reset()
         m_body->setCenterOfMassTransform(m_transform);
     }
     Vec3 forw_vec = m_transform.getBasis().getColumn(1);
-    m_heading     = atan2f(forw_vec.getY(), forw_vec.getX());
+    m_heading     = -atan2f(forw_vec.getX(), forw_vec.getY());
     Vec3 up       = getTrans().getBasis().getColumn(2);
     m_pitch       = -atan2(up.getY(), fabsf(up.getZ()));
     m_roll        = -atan2(up.getX(), up.getZ());

@@ -43,6 +43,7 @@ private:
     Camera *m_camera;
 
     SFXBase *m_bzzt_sound;
+    SFXBase *m_wee_sound;
     SFXBase *m_ugh_sound;
     SFXBase *m_grab_sound;
     SFXBase *m_full_sound;
@@ -59,6 +60,7 @@ public:
     void         action            (KartAction action, int value);
     void         collectedItem     (const Item *item, int add_info=-1);
     virtual void crashed           (Kart *k);
+    virtual void handleZipper      (bool play_sfx);
     virtual void setPosition       (int p);
     virtual void raceFinished      (float time);
     virtual void doingShortcut     ();
