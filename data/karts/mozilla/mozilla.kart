@@ -1,12 +1,12 @@
 ;; -*- mode: lisp -*-
 
 (tuxkart-kart
- (name        "Mozilla")
- (version     2)
- (model-file  "mozilla.ac")
- (icon-file   "mozillaicon.rgb")
- (shadow-file "mozillashadow.rgb")
- (groups      "Standard")
+ (name         "Mozilla")
+ (version      2)
+ (model-file   "mozilla.ac")
+ (icon-file    "mozillaicon.rgb")
+ (shadow-file  "mozillashadow.rgb")
+ (groups       "Standard")
  (engine-sound "small")
  (rgb         0.5 0.0 0.0)
   (wheel-front-right

@@ -311,7 +311,7 @@ void SDLDriver::setVideoMode(bool resetTextures)
         // models, then reload the textures from materials.dat, then reload
         // all models, textures etc.
 
-        // startScreen             -> removeTextures();
+        // startScreen          -> removeTextures();
         attachment_manager      -> removeTextures();
         projectile_manager      -> removeTextures();
         ItemManager             :: removeTextures();
@@ -327,7 +327,7 @@ void SDLDriver::setVideoMode(bool resetTextures)
         projectile_manager      -> loadData();
         attachment_manager      -> loadModels();
 
-    //        startScreen             -> installMaterial();
+        // startScreen          -> installMaterial();
 
         //FIXME: the font reinit funcs should be inside the font class
         //Reinit fonts

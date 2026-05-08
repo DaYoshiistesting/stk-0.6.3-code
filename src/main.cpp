@@ -272,7 +272,7 @@ int handleCmdLine(int argc, char **argv)
         else if( !strcmp(argv[i], "--list-karts") )
         {
             bool dont_load_models=true;
-            kart_properties_manager->loadKartData(dont_load_models) ;
+            kart_properties_manager->loadKartData(dont_load_models);
 
             fprintf ( stdout, "  Available karts:\n" );
             for (unsigned int i = 0; NULL != kart_properties_manager->getKartById(i); i++)
@@ -434,28 +434,35 @@ void InitTuxkart()
     // unlock manager is needed when reading the config file
     unlock_manager          = new UnlockManager();
     user_config             = new UserConfig();
+    stk_config              = new STKConfig();
+
+    stk_config->load(file_manager->getConfigFile("stk_config.data"));
+
     sound_manager           = new SoundManager();
     sfx_manager             = new SFXManager();
+
     // The order here can be important, e.g. KartPropertiesManager needs
     // defaultKartProperties.
     history                 = new History              ();
     material_manager        = new MaterialManager      ();
     track_manager           = new TrackManager         ();
-    stk_config              = new STKConfig            ();
     kart_properties_manager = new KartPropertiesManager();
     projectile_manager      = new ProjectileManager    ();
     powerup_manager         = new PowerupManager       ();
     callback_manager        = new CallbackManager      ();
     attachment_manager      = new AttachmentManager    ();
     highscore_manager       = new HighscoreManager     ();
-    grand_prix_manager      = new GrandPrixManager     ();
     network_manager         = new NetworkManager       ();
 
-    stk_config->load(file_manager->getConfigFile("stk_config.data"));
     track_manager->loadTrackList();
+    sound_manager->addMusicToTracks();
+
+    grand_prix_manager      = new GrandPrixManager     ();
+    // Consistency check for challenges, and enable all challenges
+    // that have all prerequisites fulfilled
+    grand_prix_manager->checkConsistency();
     // unlock_manager->check needs GP and track manager.
     unlock_manager->check();
-    sound_manager->addMusicToTracks();
 
     race_manager            = new RaceManager          ();
     // default settings for Quickstart
@@ -467,9 +474,6 @@ void InitTuxkart()
 
     menu_manager= new MenuManager();
 
-    // Consistency check for challenges, and enable all challenges
-    // that have all prerequisites fulfilled
-    grand_prix_manager->checkConsistency();
 }
 
 //=============================================================================
@@ -488,12 +492,12 @@ void CleanTuxKart()
     if(powerup_manager)         delete powerup_manager;   
     if(projectile_manager)      delete projectile_manager;
     if(kart_properties_manager) delete kart_properties_manager;
-    if(stk_config)              delete stk_config;
     if(track_manager)           delete track_manager;
     if(material_manager)        delete material_manager;
     if(history)                 delete history;
     if(sfx_manager)             delete sfx_manager;
     if(sound_manager)           delete sound_manager;
+    if(stk_config)              delete stk_config;
     if(user_config)             delete user_config;
     if(unlock_manager)          delete unlock_manager;
     if(loader)                  delete loader;
@@ -506,16 +510,14 @@ void CleanTuxKart()
 
 int main(int argc, char *argv[] ) 
 {
+    srand((unsigned) time(0));
+
     try {
 #ifdef HAVE_GLUT
         // only needed for bullet debugging.
         glutInit(&argc, argv);
 #endif
         InitTuxkart();
-
-        //handleCmdLine() needs InitTuxkart() so it can't be called first
-        if(!handleCmdLine(argc, argv)) exit(0);
-        
         if (user_config->m_log_errors) //Enable logging of stdout and stderr to logfile
         {
             std::string logoutfile = file_manager->getLogFile("stdout.log");
@@ -559,6 +561,9 @@ int main(int argc, char *argv[] )
 
         widget_manager   = new WidgetManager;
         menu_manager->switchToMainMenu();
+
+        //handleCmdLine() needs InitTuxkart() so it can't be called first
+        if(!handleCmdLine(argc, argv)) exit(0);
 
         // Replay a race
         // =============

@@ -1,12 +1,12 @@
 ;; -*- mode: lisp -*-
 
 (tuxkart-kart
- (name        "Nolok")
- (version     2)
- (model-file  "nolok.ac")
- (icon-file   "nolokicon.rgb")
- (shadow-file "nolokshadow.rgb")
- (groups      "Standard")
+ (name         "Nolok")
+ (version      2)
+ (model-file   "nolok.ac")
+ (icon-file    "nolokicon.rgb")
+ (shadow-file  "nolokshadow.rgb")
+ (groups       "Standard")
  (engine-sound "small")
  (rgb         0.6 0.6 0.3)
   (wheel-front-right

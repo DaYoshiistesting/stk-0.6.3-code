@@ -179,7 +179,7 @@ void MainLoop::run()
             // which apparently reduces the load for the X server, so that no
             // buffering is done --> all key events are handled in time.
         #if !defined(WIN32) && !defined(__CYGWIN__)
-//                usleep(2000);
+//          usleep(2000);
         #endif
             
             //Draw the splash screen

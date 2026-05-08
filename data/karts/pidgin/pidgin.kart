@@ -1,12 +1,12 @@
 ;; -*- mode: lisp -*-
 
 (tuxkart-kart
- (name        "Pidgin")
- (version     1)
- (model-file  "pidgin.ac")
- (icon-file   "pidginicon.rgb")
- (shadow-file "pidginshadow.rgb")
- (groups      "Standard")
+ (name         "Pidgin")
+ (version      1)
+ (model-file   "pidgin.ac")
+ (icon-file    "pidginicon.rgb")
+ (shadow-file  "pidginshadow.rgb")
+ (groups       "Standard")
  (engine-sound "small")
  (rgb         0.57 0.36 0.51)
   (wheel-front-right

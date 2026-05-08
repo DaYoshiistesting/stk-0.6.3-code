@@ -1,10 +1,10 @@
 (tuxkart-kart
-  (name        "Wilber")
-  (version     2)
-  (model-file  "wilber2.ac")
-  (icon-file   "wilber2icon.rgb")
-  (shadow-file "wilber2shadow.rgb")
-  (groups      "Standard")
+  (name         "Wilber")
+  (version      2)
+  (model-file   "wilber2.ac")
+  (icon-file    "wilber2icon.rgb")
+  (shadow-file  "wilber2shadow.rgb")
+  (groups       "Standard")
   (engine-sound "small")
   (rgb         0.93 0.53 0.18)
   (wheel-front-right

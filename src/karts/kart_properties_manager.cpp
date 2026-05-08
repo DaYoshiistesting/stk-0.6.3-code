@@ -59,6 +59,10 @@ void KartPropertiesManager::removeTextures()
         delete *i;
     }
     m_karts_properties.clear();
+    m_selected_karts.clear();
+    m_kart_available.clear();
+    m_groups.clear();
+    m_all_groups.clear();
     callback_manager->clear(CB_KART);
 }   // removeTextures
 
@@ -251,7 +255,7 @@ void KartPropertiesManager::selectKartName(const std::string &kart_name)
  *  group, karts from all other groups are used to fill up the list.
  *  This is used by the race manager to select the AI karts.
  *  \param count Number of karts to select randomly.
- *  \param existing_karst List of karts that should not be used. This is the
+ *  \param existing_karts List of karts that should not be used. This is the
  *                        list of karts selected by the players.
  */
 std::vector<std::string> KartPropertiesManager::getRandomKartList(int count,
@@ -268,8 +272,16 @@ std::vector<std::string> KartPropertiesManager::getRandomKartList(int count,
     std::vector<std::string> all_karts;
     for(unsigned int i=0; i<existing_karts.size(); i++)
     {
-        int id=getKartId(existing_karts[i].getKartName());
-        used[id] = true;
+        try
+        {
+            int id=getKartId(existing_karts[i].getKartName());
+            used[id] = true;
+        }
+        catch(std::runtime_error& ex)
+        {
+            (void)ex;
+            std::cerr << "[KartPropertiesManager] getRandomKartList : WARNING, can't find kart '" << existing_karts[i].getKartName() << "'\n";
+        }
     }
 
     // Add karts from the current group
@@ -312,12 +324,42 @@ std::vector<std::string> KartPropertiesManager::getRandomKartList(int count,
     }
     std::random_shuffle(karts.begin(), karts.end());
     // Then fill up the remaining empty spaces
-    while(count>0 && karts.size()>0)
+    do
     {
-        random_karts.push_back(m_karts_properties[karts.back()]->getIdent());
-        karts.pop_back();
-        count --;
-    }
+        while(count>0 && karts.size()>0)
+        {
+            random_karts.push_back(m_karts_properties[karts.back()]->getIdent());
+            karts.pop_back();
+            count --;
+        }
+
+        // we used all karts but still need more... we'll have no choice but
+        // to use the same karts more than once.
+        if (count>0 && karts.size() == 0)
+        {
+            for(unsigned int i=0; i<getNumberOfKarts(); i++)
+            {
+                if(!used[i] && m_kart_available[i] &&
+                   !unlock_manager->isLocked(m_karts_properties[i]->getIdent()) )
+                    karts.push_back(i);
+            }
+            // If there are no unused karts, use used karts again.
+            // This means that e.g. if only one kart is availabe, which is
+            // used by the player, it will still be used by AI karts (which
+            // can be useful for debugging).
+            if(karts.size()==0)
+            {
+                for(unsigned int i=0; i<getNumberOfKarts(); i++)
+                {
+                    if(m_kart_available[i] &&
+                        !unlock_manager->isLocked(m_karts_properties[i]->getIdent()) )
+                        karts.push_back(i);
+                }
+            }
+            std::random_shuffle(karts.begin(), karts.end());
+        }
+    } while(count>0);
+
     // There should always be enough karts
     assert(count==0);
     return random_karts;

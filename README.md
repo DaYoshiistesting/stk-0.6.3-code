@@ -5,7 +5,7 @@ It uses PLIB engine, like the original SuperTuxKart 0.6.x series, and it is supp
 It has some tracks/karts from 0.7.0, while still keeping its outdated engine, original tracks, karts, items, weapons…
 
 ## History
-In 2017, a 0.6.3 project was launched but never finished nor launched.
+In 2017, a 0.6.3 project was created but never released to the public.
 
 In May 2023, the project is re-launched which causes the release of Alpha-1. Alpha-1 has new/updated karts : Pidgin, Nolok, Wilber and many others.
 
@@ -23,7 +23,7 @@ In November 2023, the source code of SuperTuxKart 0.6.3 is added on GitHub.
 In January 2024, I've decided to delete SuperTuxKart 0.6.3.  
 The development of SuperTuxKart 0.6.3 continued while I was out of the project.
 
-In July 2024, I've decided to re-launch the project.  
+In July 2024, I've decided to come back to the project.  
 When I came back in the SuperTuxKart 0.6.3 Team, I learned that we have more members : DaYoshiistesting (me, Main-developper), P1ngvin (secondary developper), PeppermintPatty (leader of the SuperTuxKart 0.6.3 Project).
 
 Back at the time, I've decided to take a step away from SuperTuxKart 0.6.3 to focus on myself (which I still need to do).
@@ -33,12 +33,12 @@ In October 2024, I another time leave the project, to get some rest, until May 2
 ## Links
 If you want to play SuperTuxKart you can get it [right here](http://supertuxkart.sourceforge.net).  
 
-If you want to discuss with players or the actual SuperTuxKart team, [click here](http://supertuxkart.sourceforge.net/forum).
+If you want to discuss with players or the actual SuperTuxKart team, [click here](https://forum.supertuxkart.net).
 
 If you want to know a bit more about us, you can join our Discord server by [clicking here](https://discord.gg/pq66Emhbgn).
 
-Our previous repositories are found [right here](https://www.mediafire.com/folder/y58ywbk2f3waw/SuperTuxKart_0.6.3_Releases) 
-and [there](https://www.mediafire.com/folder/v9116m58i3h87/For_0.6.3).
+Our previous repositories are found [there](https://www.mediafire.com/folder/y58ywbk2f3waw/SuperTuxKart_0.6.3_Releases), 
+and [right here](https://www.mediafire.com/folder/v9116m58i3h87/For_0.6.3).
 
 ## Hardware Requirements 
 * You will need a GeForce4 MX 440 or better.

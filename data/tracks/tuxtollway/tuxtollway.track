@@ -2,7 +2,7 @@
 
 (tuxkart-track
  (name        _("Tux Tollway")) 
- (version                1)
+ (version     1)
  (designer    "Ivar ten Cate")
  (music       "kart_grand_prix.music")
  (screenshot  "sshot-tuxtrack.rgb")

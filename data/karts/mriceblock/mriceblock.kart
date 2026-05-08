@@ -1,10 +1,10 @@
 (tuxkart-kart
-  (name        "Mr. Iceblock")
-  (version     2)
-  (model-file  "mriceblock.ac")
-  (icon-file   "mriceblockicon.rgb")
-  (shadow-file "mriceblockshadow.rgb")
-  (groups      "Standard")
+  (name         "Mr. Iceblock")
+  (version      2)
+  (model-file   "mriceblock.ac")
+  (icon-file    "mriceblockicon.rgb")
+  (shadow-file  "mriceblockshadow.rgb")
+  (groups       "Standard")
   (engine-sound "small")
   (rgb         0.0 1.0 1.0)
   (wheel-front-right

@@ -37,13 +37,13 @@ KartModel::KartModel()
         m_wheel_graphics_position[i]     = Vec3(UNDEFINED);
         m_wheel_physics_position[i]      = Vec3(UNDEFINED);
         // For kart without separate wheels.
-        m_wheel_graphics_radius[i]       = 0.0f;   
-        m_wheel_model[i]                 = NULL;
+        m_wheel_graphics_radius[i]       =  0.0f;   
+        m_wheel_model[i]                 =  NULL;
         // Default value for kart suspensions. 
         // Move to config file later if we find each kart needs custom values.
         m_min_suspension[i]              = -1.3f;
         m_max_suspension[i]              =  1.3f;
-        m_dampen_suspension_amplitude[i] = 2.5f;
+        m_dampen_suspension_amplitude[i] =  2.5f;
     }
     m_wheel_filename[0] = "wheel-front-right.ac";
     m_wheel_filename[1] = "wheel-front-left.ac";

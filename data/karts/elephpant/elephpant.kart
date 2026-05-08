@@ -1,10 +1,10 @@
 (tuxkart-kart
-  (name        "Elephpant")
-  (version     2)
-  (model-file  "elephpant.ac")
-  (icon-file   "elephpanticon.rgb")
-  (shadow-file "elephpantshadow.rgb")
-  (groups      "Standard")
+  (name         "Elephpant")
+  (version      2)
+  (model-file   "elephpant.ac")
+  (icon-file    "elephpanticon.rgb")
+  (shadow-file  "elephpantshadow.rgb")
+  (groups       "Standard")
   (engine-sound "small")
   (rgb         0.600000 0.830000 0.000000)
   (wheel-front-right

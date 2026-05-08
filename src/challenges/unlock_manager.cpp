@@ -46,7 +46,7 @@ UnlockManager::UnlockManager()
     for(std::set<std::string>::iterator i  = result.begin();
                                         i != result.end()  ; i++)
     {
-        if (StringUtils::has_suffix(*i, ".challenge")) 
+        if(StringUtils::has_suffix(*i, ".challenge")) 
             addChallenge(file_manager->getConfigFile("challenges/"+*i));
     }
 

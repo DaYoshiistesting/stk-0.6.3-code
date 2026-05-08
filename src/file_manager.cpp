@@ -99,7 +99,7 @@ FileManager::FileManager()
 #ifdef SUPERTUXKART_DATADIR
         m_root_dir = SUPERTUXKART_DATADIR ;
 #else
-        m_root_dir = "/usr/local/share/games/supertuxkart" ;
+        m_root_dir = "/usr/local/share/games/supertuxkart";
 #endif
     // We can't use _() here, since translations will only be initalised
     // after the filemanager (to get the path to the tranlsations from it)

@@ -267,21 +267,18 @@ void UserConfig::nextBackgroundIndex()
 }
  
 // -----------------------------------------------------------------------------
-/**
- * load default configuration file for this platform
- */
+/** Load default configuration file for this platform. */
 void UserConfig::loadConfig()
 {
     loadConfig(m_filename);
 }   // loadConfig
 
 // -----------------------------------------------------------------------------
-/**
- * Checks for existance of the tuxkart configuration directory. If the
- * directory does not exist, it will be created. Return values:
- * 1: config dir exists
- * 2: does not exist, but was created
- * 0: does not exist, and could not be created.
+/** Checks for existance of the tuxkart configuration directory. If the
+ *  directory does not exist, it will be created. Return values:
+ *  1: config dir exists
+ *  2: does not exist, but was created
+ *  0: does not exist, and could not be created.
  */
 int UserConfig::CheckAndCreateDir()
 {
@@ -365,24 +362,24 @@ void UserConfig::loadConfig(const std::string& filename)
             int needToAbort=0;
             switch(configFileVersion)
             {
-            case 0:  printf("- Single window menu, old status display,new keyboard style settings were removed\n");
-                     needToAbort=std::max(needToAbort,0);
-            case 1:  printf("- Key bindings were changed, please check the settings. All existing values were discarded.\n");
-                     needToAbort=std::max(needToAbort,1);// old keybinds wouldn't make any sense
-            case 2:  printf("Added username, using: '%s'.\n", m_username.c_str());
-                     needToAbort=std::max(needToAbort,0);
-            case 3:  printf("Added username for all players.\n");
-                     needToAbort=std::max(needToAbort,0);
-            case 4:  printf("Added jumping, which invalidates all key bindings.\n");
-                     needToAbort=std::max(needToAbort,0);
-            case 6:  printf("Added nitro and drifting, removed jumping and wheelie.\n");
-                     nitro_name="wheelie";
-                     drift_name="jump";
-                     needToAbort=std::max(needToAbort,0);
-            case 99: break;
-            default: printf("Config file version '%d' is too old. Discarding your configuration. Sorry. :(\n", configFileVersion);
-                     needToAbort=1;
-                     break;
+                case 0:  printf("- Single window menu, old status display,new keyboard style settings were removed\n");
+                         needToAbort=std::max(needToAbort,0);
+                case 1:  printf("- Key bindings were changed, please check the settings. All existing values were discarded.\n");
+                         needToAbort=std::max(needToAbort,1);// old keybinds wouldn't make any sense
+                case 2:  printf("Added username, using: '%s'.\n", m_username.c_str());
+                         needToAbort=std::max(needToAbort,0);
+                case 3:  printf("Added username for all players.\n");
+                         needToAbort=std::max(needToAbort,0);
+                case 4:  printf("Added jumping, which invalidates all key bindings.\n");
+                         needToAbort=std::max(needToAbort,0);
+                case 6:  printf("Added nitro and drifting, removed jumping and wheelie.\n");
+                         nitro_name="wheelie";
+                         drift_name="jump";
+                         needToAbort=std::max(needToAbort,0);
+                case 99: break;
+                default: printf("Config file version '%d' is too old. Discarding your configuration. Sorry. :(\n", configFileVersion);
+                         needToAbort=1;
+                         break;
             }
             if(needToAbort)
             {
@@ -419,8 +416,7 @@ void UserConfig::loadConfig(const std::string& filename)
         //detect if resolution change previously crashed STK
         lisp->get("crash_detected",   m_crashed);
         // blacklisted resolutions
-        lisp->getVector("blacklisted_resolutions",
-                                      m_blacklist_res);
+        lisp->getVector("blacklisted_resolutions", m_blacklist_res);
         /*Get default number of karts, number of laps, and difficulty. */
         lisp->get("karts",            m_num_karts);
         lisp->get("laps",             m_num_laps);

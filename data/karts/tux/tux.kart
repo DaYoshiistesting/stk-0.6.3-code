@@ -1,12 +1,12 @@
 ;; -*- mode: lisp -*-
 
 (tuxkart-kart
- (name        "Tux")
- (version     2)
- (model-file  "tux.ac")
- (icon-file   "tuxicon.rgb")
- (shadow-file "tuxkartshadow.rgb") 
- (groups      "Standard")
+ (name         "Tux")
+ (version      2)
+ (model-file   "tux.ac")
+ (icon-file    "tuxicon.rgb")
+ (shadow-file  "tuxkartshadow.rgb") 
+ (groups       "Standard")
  (engine-sound "small")
  (rgb         0.9 0.25 0.25)
  (wheel-front-right

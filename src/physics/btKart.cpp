@@ -629,6 +629,8 @@ void btKart::updateFriction(btScalar timeStep)
                 resolveSingleBilateral(*m_chassisBody, wheelInfo.m_raycastInfo.m_contactPointWS,
                     *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
                     btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
+
+                m_sideImpulse[i] *= btScalar(1.);
             }
         }
     }
@@ -661,18 +663,18 @@ void btKart::updateFriction(btScalar timeStep)
             m_forwardImpulse[wheel] = btScalar(0.);
             m_wheelInfo[wheel].m_skidInfo= btScalar(1.);
 
-            if (groundObject)
+            if(groundObject)
             {                
-                if (m_zipper_active)
+                if(m_zipper_active)
                 {
-                    if (wheel==2 || wheel==3)
+                    if(wheel==2 || wheel==3)
                     {
                         m_forwardImpulse[wheel] = 0.5f*(m_zipper_velocity - getRigidBody()->getLinearVelocity().length()) / m_chassisBody->getInvMass();
                     }
                 }
                 else
                 {
-                    if (wheelInfo.m_engineForce != 0.f)
+                    if(wheelInfo.m_engineForce != 0.f)
                     {
                         rollingFriction = wheelInfo.m_engineForce* timeStep;
                     } 
@@ -692,13 +694,13 @@ void btKart::updateFriction(btScalar timeStep)
                         if(wheelInfo.m_brake && fabsf(rollingFriction)<10)
                             rollingFriction=0;
                     }
-
                     m_forwardImpulse[wheel] = rollingFriction;//wheelInfo.m_engineForce* timeStep;
                 }
-            } 
+            }
         }
         m_zipper_active = false;
     }
+
     // apply the impulses
     {
         for (int wheel = 0;wheel<getNumWheels() ; wheel++)

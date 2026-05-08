@@ -1,10 +1,10 @@
 (tuxkart-kart
-  (name        "Puffy")
-  (version     2)
-  (model-file  "openbsd-blowfish-kart.ac")
-  (icon-file   "puffy-icon.rgb")
-  (shadow-file "puffy-shadow.rgb")
-  (groups      "Standard")
+  (name         "Puffy")
+  (version      2)
+  (model-file   "openbsd-blowfish-kart.ac")
+  (icon-file    "puffy-icon.rgb")
+  (shadow-file  "puffy-shadow.rgb")
+  (groups       "Standard")
   (engine-sound "small")
   (rgb         0.125000 0.500000 0.125000)
   (wheel-front-right

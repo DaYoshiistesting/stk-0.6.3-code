@@ -29,7 +29,9 @@ class KartProperties;
 class KartPropertiesManager
 {
 private:
+    /** List of all kart groups. */
     std::vector<std::string>                 m_all_groups;
+    /** Mapping of group names to list of kart indices in each group. */
     std::map<std::string, std::vector<int> > m_groups;
     /** Vector containing kart numbers that have been selected in multiplayer
      * games.  This it used to ensure the same kart can not be selected more
