@@ -30,12 +30,12 @@ class DefaultRobot : public AutoKart
 private:
     enum FallbackTactic
     {
-        FT_AVOID_TRACK_CRASH, //Only steer to avoid getting out of the road,
-                              //otherwise, don't steer at all
-        FT_PARALLEL,    //Stay parallel to the road
-        FT_FAREST_POINT //Drive towards the farest non-crashing point that
-                        //the kart can drive to in a straight line without
-                        //crashing with the track.
+        FT_AVOID_TRACK_CRASH, // Only steer to avoid getting out of the road,
+                              // otherwise, don't steer at all
+        FT_PARALLEL,    // Stay parallel to the road
+        FT_FAREST_POINT // Drive towards the farest non-crashing point that
+                        // the kart can drive to in a straight line without
+                        // crashing with the track.
     };
 
     /** How the AI uses nitro. */
@@ -52,36 +52,36 @@ private:
     {
         public:
 
-        bool m_road; //true if we are going to 'crash' with the bounds of the road
-        int m_kart; //-1 if no crash, pos numbers are the kart it crashes with
+        bool m_road; // true if we are going to 'crash' with the bounds of the road
+        int m_kart; // -1 if no crash, pos numbers are the kart it crashes with
         CrashTypes() : m_road(false), m_kart(-1) {};
         void clear() {m_road = false; m_kart = -1;}
     } m_crashes;
 
-    /*Difficulty handling variables*/
-    float m_max_start_delay; //Delay before accelerating at the start of each
-                             //race
-    int m_min_steps; //Minimum number of steps to check. If 0, the AI doesn't
-                     //even has check around the kart, if 1, it checks around
-                     //the kart always, and more than that will check the
-                     //remaining number of steps in front of the kart, always
-    bool  m_wait_for_players; //If true, the acceleration is decreased when
-                              //the AI is in a better position than all the
-                              //human players.
-    float m_max_handicap_accel; //The allowed maximum speed, in percentage,
-                                //from 0.0 to 1.0. Used only when
-                                //m_wait_for_players == true.
-    FallbackTactic m_fallback_tactic; //General steering procedure. Used
-                                      //mostly on straight lines and on curves
-                                      //that re too small to need special
-                                      //handling.
+    /** Difficulty handling variables */
+    float m_max_start_delay; // Delay before accelerating at the start of each
+                             // race
+    int m_min_steps; // Minimum number of steps to check. If 0, the AI doesn't
+                     // even has check around the kart, if 1, it checks around
+                     // the kart always, and more than that will check the
+                     // remaining number of steps in front of the kart, always.
+    bool  m_wait_for_players; // If true, the acceleration is decreased when
+                              // the AI is in a better position than all the
+                              // human players.
+    float m_max_handicap_accel; // The allowed maximum speed, in percentage,
+                                // from 0.0 to 1.0. Used only when
+                                // m_wait_for_players == true.
+    FallbackTactic m_fallback_tactic; // General steering procedure. Used
+                                      // mostly on straight lines and on curves
+                                      // that re too small to need special
+                                      // handling.
     
-    ItemTactic m_item_tactic; //How are items going to be used?
+    ItemTactic m_item_tactic; // How items are going to be used.
 
     /** True if the kart should try to pass on a bomb to another kart. */
 
     bool m_handle_bomb;
-    /*General purpose variables*/
+    /** General purpose variables */
     //The crash percentage is how much of the time the AI has been crashing,
     //if the AI has been crashing for some time, use the rescue.
     float m_crash_time;
@@ -104,10 +104,10 @@ private:
     int   m_future_sector;
     sgVec2 m_future_location;
 
-    float m_time_till_start; //Used to simulate a delay at the start of the
-                             //race, since human players don't accelerate
-                             //at the same time and rarely repeat the a
-                             //previous timing.
+    float m_time_till_start; // Used to simulate a delay at the start of the
+                             // race, since human players don't accelerate
+                             // at the same time and rarely repeat the a
+                             // previous timing.
 
     int m_inner_curve;//-1 left, 1 = right, 0 = center
     float m_curve_target_speed;
@@ -124,7 +124,7 @@ private:
     
     float m_time_since_stuck;
 
-    int m_start_kart_crash_direction; //-1 = left, 1 = right, 0 = no crash.
+    int m_start_kart_crash_direction; // -1 = left, 1 = right, 0 = no crash.
 
     /** Length of the kart, storing it here saves many function calls. */
     float m_kart_length;
@@ -141,24 +141,27 @@ private:
 
     /** The minimum steering angle at which the AI adds skidding. Lower values
      *  tend to improve the line the AI is driving. This is used to adjust for
-     *  different AI levels.
-     */
+     *  different AI levels. */
     float m_skidding_threshold;
 
     int   m_sector;
 
-    /*Functions called directly from update(). They all represent an action
-     *that can be done, and end up setting their respective m_controls
-     *variable, except handle_race_start() that isn't associated with any
-     *specific action (more like, associated with inaction).
-     */
+    /** Variables for random nitro usage */
+    float m_random_nitro_timer;      // Current duration of random nitro usage
+    float m_random_nitro_duration;   // How long the random nitro boost lasts
+    float m_random_nitro_cooldown;   // Cooldown before next random nitro boost
+
+    /** Functions called directly from update(). They all represent an action
+     *  that can be done, and end up setting their respective m_controls
+     *  variable, except handle_race_start() that isn't associated with any
+     *  specific action (more like, associated with inaction). */
     void  handleRaceStart();
     void  handleAcceleration(const float DELTA);
     void  handleSteering(float dt);
     void  handleItems(const float DELTA, const int STEPS);
     void  handleRescue(const float DELTA);
     void  handleBraking();
-    void  handleNitroAndZipper();
+    void  handleNitroAndZipper(const float DELTA);
     void  computeNearestKarts();
     void  handleItemCollectionAndAvoidance(Vec3 *straight_point,
                                            int m_sector);

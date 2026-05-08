@@ -209,7 +209,7 @@ void DefaultRobot::update(float dt)
         handleBraking();
         // If a bomb is attached, nitro might already be set.
         if(!m_controls.m_nitro)
-            handleNitroAndZipper();
+            handleNitroAndZipper(dt);
     }
     // If we are supposed to use nitro, but have a zipper, 
     // use the zipper instead
@@ -389,81 +389,10 @@ void DefaultRobot::handleSteering(float dt)
 #ifdef AI_DEBUG
         std::cout << "- Fallback."  << std::endl;
 #endif
-        // Potentially adjust the point to aim for in order to either
-        // aim to collect item, or steer to avoid a bad item.
-        //if(m_item_behaviour!=ITEM_COLLECT_NONE)
-        //handleItemCollectionAndAvoidance(straight_point, last_node);
-
     }
     setSteering(steer_angle, dt);
 }   // handleSteering
 
-//-----------------------------------------------------------------------------
-/*void DefaultRobot::handleItemCollectionAndAvoidance(Vec3 *straight_point, int m_sector)
-{
-    const unsigned int DRIVELINE_SIZE = (unsigned int)m_track->m_driveline.size();
-    const size_t NEXT_SECTOR = (unsigned int)m_track_sector + 1 < DRIVELINE_SIZE 
-                             ? m_track_sector + 1 : 0;
-
-    // Angle of line from kart to aim_point
-    float kart_aim_angle = atan2(straight_point->getX()- getXYZ().getX(),
-                                 straight_point->getY()- getXYZ().getY());
-
-    if(m_item_to_collect)
-    {
-        if(handleSelectedItem(kart_aim_angle, straight_point, m_sector))
-        {
-            // Still aim at the previsouly selected item.
-            *straight_point = m_item_to_collect->getXYZ();
-            return;
-        }
-        // Otherwise remove the pre-selected item (and start
-        // looking for a new item).
-         m_item_to_collect = NULL;
-    } // m_item_to_collect
-
-    // Make sure we have a valid sector
-    if(m_sector==Track::UNKNOWN_SECTOR)
-       m_sector = NEXT_SECTOR;
-
-    int sector = m_track_sector;
-    float distance = 0;
-    const Item *item_to_collect = NULL;
-    const Item *item_to_avoid   = NULL;
-
-    const float max_item_lookahead_distance = 30.f;
-    while(distance < max_item_lookahead_distance)
-    {
-        int s_index = m_track_mesh;
-        const std::vector<Item *> &items_ahead = item->getXYZ();
-            ItemManager::get()->getItemsInQuads(s_index);
-        for(unsigned int i=0; i<items_ahead.size(); i++)
-        {
-            evaluateItems(items_ahead[i],  kart_aim_angle, 
-                          &item_to_avoid, &item_to_collect);
-        }   // for i<items_ahead;
-        distance += sgDistanceVec2
-                   (m_track->m_driveline[sector], m_track->m_driveline[NEXT_SECTOR]); 
-
-        sector = m_track->m_driveline[NEXT_SECTOR];
-        // Stop when we have reached the last quad
-        if(sector==m_sector) break;
-    }   // while (distance < max_item_lookahead_distance)
-
-    sgFloat Line1
-    sgFloat Line2;
-    Line1 = sgSetVec2(30.f, getXYZ().getX(), getXYZ().getY());
-    Line2 = sgSetVec2(30.f, straight_point->getX(), straight_point->getY());
-    sgVec2 *line_to_target = Line1 + Line2;
-
-
-    if(item_to_collect)
-    {
-        sgFloat collect(item_to_collect->getXYZ().getX(),
-                                item_to_collect->getXYZ().getY());
-        core::vector2df cp = line_to_target.getClosestPoint(collect);
-        Vec3 xyz(cp.X, item_to_collect->getXYZ().getY(), cp.Y);
-}//*/
 //-----------------------------------------------------------------------------
 void DefaultRobot::handleItems(const float DELTA, const int STEPS)
 {
@@ -703,7 +632,7 @@ void DefaultRobot::handleRescue(const float DELTA)
 //-----------------------------------------------------------------------------
 /** Decides wether to use nitro or not.
  */
-void DefaultRobot::handleNitroAndZipper()
+void DefaultRobot::handleNitroAndZipper(const float DELTA)
 {
     m_controls.m_nitro = false;
     // If we are already very fast, save nitro.
@@ -733,7 +662,7 @@ void DefaultRobot::handleNitroAndZipper()
     if(has_slowdown_attachment) return;
 
     // If the kart is very slow (e.g. after rescue), use nitro
-    if(getSpeed()<5)
+    if(getSpeed()<=7)
     {
         m_controls.m_nitro = true;
         return;
@@ -766,7 +695,7 @@ void DefaultRobot::handleNitroAndZipper()
 
     // A kart within this distance is considered to be overtaking (or to be
     // overtaken).
-    const float overtake_distance = 10.0f;
+    const float overtake_distance = 15.0f;
 
     // Try to overtake a kart that is close ahead, except 
     // when we are already much faster than that kart
@@ -782,8 +711,48 @@ void DefaultRobot::handleNitroAndZipper()
        m_kart_behind->getSpeed() > getSpeed())
     {
         // Only prevent overtaking on highest level
-        m_controls.m_nitro = m_nitro_level==NITRO_ALL;
+        if(m_nitro_level == NITRO_ALL)
+        {
+            m_controls.m_nitro = true;
+            return;
+        }
+    }
+
+    // Use nitro randomly for short boosts, then wait and 
+    // repeat the cycle once again
+    // --------------------------------------------------
+    if(m_random_nitro_cooldown > 0.0f)
+    {
+        m_random_nitro_cooldown -= DELTA;
         return;
+    }
+
+    // Check if we should start a new nitro boost
+    if(m_random_nitro_timer <= 0.0f)
+    {
+        // Decide randomly whether to use nitro (1/2 chance)
+        if((rand() % 1) < 0.5f)
+        {
+            // Start a new boost with random duration
+            m_random_nitro_duration = 0.1f + 
+                                     (float)(rand()) / RAND_MAX * 0.5f;
+            m_random_nitro_timer = m_random_nitro_duration;
+        }
+    }
+
+    // Use nitro if we have an active boost and have energy
+    if(m_random_nitro_timer > 0.0f && getEnergy() > 0.0f)
+    {
+        m_controls.m_nitro = true;
+        m_random_nitro_timer -= DELTA;
+
+        // When burst ends, set cooldown before next burst
+        if(m_random_nitro_timer <= 0.0f)
+        {
+            m_random_nitro_cooldown = 0.2f + 
+                                     (float)(rand()) / RAND_MAX * 8.3f;
+            m_random_nitro_timer = 0.0f;
+        }
     }
 }   // handleNitroAndZipper
 
@@ -1069,6 +1038,9 @@ void DefaultRobot::reset()
     m_distance_ahead             = 0.0f;
     m_kart_behind                = NULL;
     m_distance_behind            = 0.0f;
+    m_random_nitro_timer         = 0.0f;
+    m_random_nitro_duration      = 0.0f;
+    m_random_nitro_cooldown      = 0.0f;
 
     AutoKart::reset();
 }   // reset
